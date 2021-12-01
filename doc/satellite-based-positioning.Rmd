@@ -1,0 +1,81 @@
+---
+title: "GPS_Coordinate_Plots"
+author: "Surakshya Dhakal"
+date: "May 15, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+my_preferred_repo <- 'http://cran.r-project.org'
+if (!require("pacman")) {install.packages("pacman", repos = my_preferred_repo)}
+
+# Load the other packages, installing as needed
+pacman::p_load(knitr, pander, dplyr, ggplot2)
+```
+
+
+**The exercise aims to explore the possibilities of handheld GNSS/GPS receivers and increase the understanding of some errors and their consequences.**
+
+
+## Read in the Datasets
+
+```{r data}
+# GPS coordinates collected outside Bloedel Hall
+ob <- read.csv("../data/OutsideBloedel.csv")
+
+# GPS coordinates collected over the True North control point
+tn <- read.csv("../data/TrueNorth.csv")
+
+# GPS coordinates collected in the Medicinal Herb Garden
+mgh <- read.csv("../data/MedicinalHerbGarden.csv")
+```
+
+
+
+## Create Plots
+
+```{r OutsideBloedel}
+ob_mean <- ob %>%
+  summarise(X = mean(X),
+            Y  = mean(Y))
+
+ggplot(ob, aes(x = X, y = Y)) +
+  geom_point(color = "orangered3") +
+  geom_point(data = ob_mean, size = 3, shape = 19, colour = "orange") +
+  scale_fill_hue(c=100, l=100) +
+  ggtitle("Outside a Building with Other Concrete Structures and Trees Around")
+
+dev.copy(png,'../figures/OB.png')
+dev.off()
+```
+
+
+```{r TrueNorth}
+tn_mean <- tn %>%
+  summarise(X = mean(X),
+            Y  = mean(Y))
+
+ggplot(tn, aes(x = X, y = Y)) +
+  geom_point(color = "navy") +
+  geom_point(data = tn_mean, size = 3, shape = 19, colour = "orange") +
+  ggtitle("Over True North Control Point (Relatively Open Area)")
+
+dev.copy(png,'../figures/TN.png')
+dev.off()
+```
+
+
+```{r MedicinalHerbGarden}
+mgh_mean <- mgh %>%
+  summarise(X = mean(X),
+            Y  = mean(Y))
+
+ggplot(mgh, aes(x = X, y = Y)) +
+  geom_point(color = "green4") +
+  geom_point(data = mgh_mean, size = 3, shape = 19, colour = "orange") +
+  ggtitle("In Forested Area")
+
+dev.copy(png,'../figures/MGH.png')
+dev.off()
+```
+
